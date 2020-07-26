@@ -28,92 +28,11 @@ question1 = """
 ### Question 2:
 
 charmeFactorialDefinition = """
-   (define fact (lambda(n)(if(= n 1)1(* n (fact (- n 1))))))
+   <provide your Charme factorial definition here>
    """
 
 ### Questions 3-8:
 ### Modify the provided interpreter code below
-## question 3
-def primitiveLessThanOrEquals (operands):
-    checkOperands (operands, 2, '<=')
-    return operands[0] <= operands[1]
-
-## question 4
-class Cons:
-    def __init__(self,first,second):
-        self._first = first
-        self._second = second
-    
-    def getFirst(self):
-        return self._first
-    
-    def getSecond(self):
-        return self._second
-    
-    def __str__(self):
-        return "(" + str(self._first) + " . " + str(self._second) + ")"
-    
-def primitiveCons (operands):
-    checkOperands (operands, 2, 'cons')
-    return Cons(operands[0],operands[1])
-
-def primitiveCar (operands):
-    checkOperands (operands, 1, 'car')
-    return operands[0].getFirst()
-
-def primitiveCdr (operands):
-    checkOperands (operands, 1, 'cdr')
-    return operands[0].getSecond()
-
-## question 5
-def primitiveTestNull(operands):
-    checkOperands (operands, 1, 'null?')
-    return operands[0] is  None
-
-## question 6
-class List:
-    def __init__(self,args):
-        self._elements = args
-    
-    def getFirst(self):
-        return self._elements[0]
-    
-    def getSecond(self):
-        rest = self._elements[1:]
-        if len(rest) == 0:
-            return None
-        else: 
-            return List(rest)
-    
-    def __str__(self):
-        listString = "("
-        for element in self._elements:
-            listString += str(element) + " "
-        return listString.strip() + ")"
-
-def primitiveList(operands):
-    if len(operands) == 0:
-        return None
-    else:
-        return List(operands)
-
-## question 7
-def isCond(expr):
-    return isSpecialForm(expr, 'cond')
-
-def evalCond(expr,env):
-    assert isCond(expr)
-    if len(expr) == 1:
-        return None
-    elif len(expr[1]) != 2:
-        evalError ('Bad if expression: %s' % str(expr))
-    else:
-        if meval(expr[1][0], env) != False:
-            return meval(expr[1][1], env)
-        else:
-            rest = expr[2:]
-            rest.insert(0,'cond')
-            return meval(rest,env)
 
 ### Question 9:
 
@@ -131,20 +50,6 @@ Replace this with text explaining what specific things you hope to learn in the 
 
 ### Question 10:
 ### a. (mark your modifications in the interpreter clearly)
-
-def isOr(expr):
-    return isSpecialForm(expr, 'or')
-
-def evalOr(expr,env):
-    assert isOr(expr)
-    if len(expr) < 3:
-        evalError ('Bad if expression: %s' % str(expr))
-    if len(expr) == 3:
-        return meval(expr[1],env) or meval(expr[2],env)
-    else:
-        rest = expr[2:]
-        rest.insert(0,'or')
-        return meval(expr[1],env) or meval(rest,env)
 
 editDistanceDefinition = """
 
@@ -222,16 +127,14 @@ def meval(expr, env):
        return evalPrimitive(expr)
     elif isIf(expr):             
         return evalIf(expr, env) 
-    elif isCond(expr):
-        return evalCond(expr,env)
-    elif isOr(expr):
-        return evalOr(expr,env)
     elif isDefinition(expr):                
        evalDefinition(expr, env)
     elif isName(expr):
        return evalName(expr, env)
     elif isLambda(expr):
        return evalLambda(expr, env)
+    elif is_thunk(expr):
+       return expr
     elif isApplication(expr):
        return evalApplication(expr, env)
     else:
@@ -290,6 +193,10 @@ def primitiveLessThan (operands):
     checkOperands (operands, 2, '<')
     return operands[0] < operands[1]
 
+def primitiveLessNot (operands):
+    checkOperands (operands, 1, 'not')
+    return not operands[0] 
+
 def checkOperands(operands, num, prim):
     if (len(operands) != num):
        evalError('Primitive %s expected %s operands, given %s: %s' 
@@ -307,7 +214,7 @@ def evalIf(expr,env):
     assert isIf(expr)
     if len(expr) != 4:
         evalError ('Bad if expression: %s' % str(expr))
-    if meval(expr[1], env) != False:
+    if force_eval(expr[1], env) != False:
         return meval(expr[2],env)
     else:
         return meval(expr[3],env)
@@ -326,6 +233,7 @@ class Environment:
         elif (self._parent):
             return self._parent.lookupVariable(name)
         else:
+            print(str(name))
             evalError('Undefined name: %s' % (name))
 
 def isDefinition(expr):
@@ -380,27 +288,27 @@ def isApplication(expr): # requires: all special forms checked first
     return isinstance(expr, list)
    
 def evalApplication(expr, env):
-    subexprs = expr
-    subexprvals = map (lambda sexpr: meval(sexpr, env), subexprs)
-    return mapply(subexprvals[0], subexprvals[1:])
+    ops = map (lambda sexpr: Thunk(sexpr, env), expr[1:])
+    return mapply(force_eval(expr[0],env), ops)
 
 def mapply(proc, operands):
-    if (isPrimitiveProcedure(proc)):
-        return proc(operands)
-    elif isinstance(proc, Procedure):
-        key = str(proc) + str(operands)
-        if tables.has_key(key):
-            return tables[key]
+    def dethunk(expr):
+        if is_thunk(expr):
+            return expr.value()
         else:
-            params = proc.getParams()
-            newenv = Environment(proc.getEnvironment())
-            if len(params) != len(operands):
-                evalError ('Parameter length mismatch: %s given operands %s' 
+            return expr
+    if (isPrimitiveProcedure(proc)):
+        ops =  map(dethunk,operands)
+        return proc(ops)
+    elif isinstance(proc, Procedure):
+        params = proc.getParams()
+        newenv = Environment(proc.getEnvironment())
+        if len(params) != len(operands):
+            evalError ('Parameter length mismatch: %s given operands %s' 
                        % (str(proc), str(operands)))
-            for i in range(0, len(params)):
-                newenv.addVariable(params[i], operands[i])     
-            tables[key] = meval(proc.getBody(), newenv)        
-            return tables[key]      
+        for i in range(0, len(params)):
+               newenv.addVariable(params[i], operands[i])        
+        return meval(proc.getBody(), newenv)        
     else:
         evalError('Application of non-procedure: %s' % (proc))
 
@@ -408,12 +316,9 @@ def mapply(proc, operands):
 
 def initializeGlobalEnvironment():
     global globalEnvironment
-    global tables 
-    tables = {}
     globalEnvironment = Environment(None)
-    globalEnvironment.addVariable('true', True)
-    globalEnvironment.addVariable('false', False)
-    globalEnvironment.addVariable('null',None)
+    #globalEnvironment.addVariable('true', True)
+    #globalEnvironment.addVariable('false', False)
     globalEnvironment.addVariable('+', primitivePlus)
     globalEnvironment.addVariable('-', primitiveMinus)
     globalEnvironment.addVariable('*', primitiveTimes)
@@ -421,13 +326,7 @@ def initializeGlobalEnvironment():
     globalEnvironment.addVariable('zero?', primitiveZero)
     globalEnvironment.addVariable('>', primitiveGreater)
     globalEnvironment.addVariable('<', primitiveLessThan)
-    globalEnvironment.addVariable('<=',primitiveLessThanOrEquals)
-    globalEnvironment.addVariable('cons',primitiveCons)
-    globalEnvironment.addVariable('car',primitiveCar)
-    globalEnvironment.addVariable('cdr',primitiveCdr)
-    globalEnvironment.addVariable('null?',primitiveTestNull)
-    globalEnvironment.addVariable('list',primitiveList)
-    globalEnvironment.addVariable('min',min)
+    globalEnvironment.addVariable('not', primitiveLessNot)
 
 def evalError(msg): # not in book
     print ("Evaluation Error: " + msg    )
@@ -438,15 +337,34 @@ def parseError(msg): # not in book
 def evalLoop():
     initializeGlobalEnvironment()
     while True:
-        inv = raw_input('Charme> ')
+        inv = raw_input('LazyCharme> ')
         if inv == 'quit': break
         for expr in parse(inv):
-            print(str(meval(expr, globalEnvironment)))
+            print(str(force_eval(expr, globalEnvironment)))
 
 def evalInGlobal(expr):
-    #initializeGlobalEnvironment()
-    return meval(parse(expr)[0], globalEnvironment)
+    return force_eval(parse(expr)[0], globalEnvironment)
 
-#initializeGlobalEnvironment()
-#meval('23', globalEnvironment)
-#meval(['+', '1', '2'], globalEnvironment)
+
+# Thunk
+class Thunk:
+    def __init__(self,expr,env):
+        self._expr = expr
+        self._env = env
+        self._evaluated =False
+    def value(self):
+        if not self._evaluated:
+            self._value = force_eval(self._expr,self._env)
+            self._evaluated = True
+        return self._value
+
+def is_thunk(expr):
+    return isinstance(expr,Thunk)
+
+def force_eval(expr,env):
+    val = meval(expr,env)
+    if is_thunk(val):
+        return val.value()
+    else:
+        return val
+
