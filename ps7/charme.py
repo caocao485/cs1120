@@ -146,6 +146,48 @@ def evalOr(expr,env):
         rest.insert(0,'or')
         return meval(expr[1],env) or meval(rest,env)
 
+def isAnd(expr):
+    return isSpecialForm(expr, 'and')
+
+def evalAnd(expr,env):
+    assert isAnd(expr)
+    if len(expr) < 3:
+        evalError ('Bad And expression: %s' % str(expr))
+    if len(expr) == 3:
+        return meval(expr[1],env) and meval(expr[2],env)
+    else:
+        rest = expr[2:]
+        rest.insert(0,'and')
+        return meval(expr[1],env) and meval(rest,env)
+
+def isFor(expr):
+    return isSpecialForm(expr,'for')
+
+def evalFor(expr,env):
+    assert isFor(expr)
+    if len(expr) != 5:
+         evalError ('Bad For expression: %s' % str(expr))
+    name = expr[1]
+    if isinstance(name, str) and expr[2] == 'in' :
+        value = meval(expr[3], env)
+        if value is None:
+            return None
+        if isinstance(value,List):
+            resultList = []
+            newenv = Environment(env)
+            newenv.addVariable(name, None)
+            for val in value._elements:
+                newenv.addVariable(name,val)
+                resultList.append(meval(expr[4],newenv))
+            return List(resultList)
+        else:
+            evalError ('Bad For expression: %s' % str(expr))
+    else:
+        evalError ('Bad For expression: %s' % str(expr))
+
+
+
+
 editDistanceDefinition = """
 
 
@@ -226,6 +268,10 @@ def meval(expr, env):
         return evalCond(expr,env)
     elif isOr(expr):
         return evalOr(expr,env)
+    elif isAnd(expr):
+        return evalAnd(expr,env)
+    elif isFor(expr):
+        return evalFor(expr,env)
     elif isDefinition(expr):                
        evalDefinition(expr, env)
     elif isName(expr):
