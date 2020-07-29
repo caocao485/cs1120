@@ -116,10 +116,10 @@ public class TestAazda {
 		// These tests are commented out for now, since they will fail with the provided interpreter.
 		// As you answer the problems, uncomment each test.
 		
-		// testAssignment(); // will fail until Problem 1
-		// testBegin(); // will fail until Problem 2
-		// testCond(); // will fail until Problem 3
+		testAssignment(); // will fail until Problem 1
+		testBegin(); // will fail until Problem 2
+		testCond(); // will fail until Problem 3
 
-		// testFactorial(); // will fail until Problem 4
+		testFactorial(); // will fail until Problem 4
 	}
 }

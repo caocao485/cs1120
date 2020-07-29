@@ -1,0 +1,40 @@
+{
+    "id":17771,
+    "mediaType":1,
+    "question":"在道路上遇到这种情况可以从两侧超车。",
+    "answer":32,
+    "answerFormat":[
+        "b"],
+    "mediaContentPath":"http:\/\/files.static.zqwzc.com\/wyjk\/questions\/20190408\/bdd000a40dbb0e5bba2ffc6ac77e9cd2.webp",
+    "mediaUrl":"http:\/\/files.static.zqwzc.com\/wyjk\/questions\/20190408\/bdd000a40dbb0e5bba2ffc6ac77e9cd2.webp",
+    "optionA":"正确",
+    "optionB":"错误",
+    "optionC":"",
+    "optionD":"",
+    "optionE":"",
+    "optionF":"",
+    "optionG":"",
+    "optionH":"",
+    "explain":"<p>《中华人民共和国道路交通安全法》第四十三条：<br\/><span style=\"font-size: 16px;\">同车道行驶的机动车，后车应当与前车保持足以采取紧急制动措施的安全距离。有下列情形之一的，不得超车：<br\/><\/span><span style=\"font-size: 16px;\">（一）前车正在左转弯、掉头、超车的；<br\/><\/span><span style=\"font-size: 16px;\">（二）与对面来车有会车可能的；<br\/><\/span><span style=\"font-size: 16px;\">（三）前车为执行紧急任务的警车、消防车、救护车、工程救险车的；<br\/><\/span><span style=\"font-size: 16px;\">（四）行经铁路道口、交叉路口、窄桥、弯道、陡坡、隧道、人行横道、市区交通流量大的路段等没有超车条件的。<\/span><\/p>",
+    "optionType":0,
+    "factAnswer":[
+        1],
+    "factAnswerLabel":[
+        "B"],
+    "options":[
+        {
+            "isRight":false,
+            "answer":"16",
+            "label":"正确",
+            "option":"A"
+        },
+        {
+            "isRight":true,
+            "answer":"32",
+            "label":"错误",
+            "option":"B"
+        }],
+    "optionValues":[
+        "16",
+        "32"]
+}

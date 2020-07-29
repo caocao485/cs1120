@@ -9,13 +9,10 @@ multipleAnswerList = []
 judgeList = []
 style = xlwt.XFStyle()
 
-urls = ['https://www.jsyks.com/kms-st-z1511',
-    'https://www.jsyks.com/kms-st-z1512',
-    'https://www.jsyks.com/kms-st-z1513',
-    'https://www.jsyks.com/kms-st-z1514',
-    'https://www.jsyks.com/kms-st-z1515',
-    'https://www.jsyks.com/kms-st-z1516',
-    'https://www.jsyks.com/kms-st-z1517'
+urls = ['https://www.jsyks.com/kmy-st-z1501',
+    'https://www.jsyks.com/kmy-st-z1502',
+    'https://www.jsyks.com/kmy-st-z1503',
+    'https://www.jsyks.com/kmy-st-z1504'
 ]
 
 
@@ -81,7 +78,7 @@ def writeToXl():
     sh3.write(0, 3, '图片链接')
     for st , judge in zip(range(1,len(judgeList)) ,judgeList):
         judge.write(sh3,st)
-    wb.save('题库.xls')
+    wb.save('科目一题库.xls')
 
 
 #soup.select('tr')[1].select('img')  由len长短来确定是否有img
@@ -175,3 +172,22 @@ def start():
 #response = requests.get('https://www.jsyks.com/kms-st-z1511')
 #response.encoding = 'utf-8'
 #soup = BeautifulSoup(response.text,"html.parser")
+
+def analyzeSingle(url):
+    response = requests.get(url)
+    response.encoding = 'utf-8'
+    soup = BeautifulSoup(response.text,"html.parser")
+    return soup
+
+# 选择题
+#soup.select(".number-line button a") 题目链接
+#soup.select(".checkbox-circle")
+#for i in su.select(".checkbox-circle label"): 选项
+#   i.text.strip() 各个选型
+#
+# su.select(".one-t a")[0].text.strip().split()[2][1:] 题目
+# su.select(".one-e span")[2].string.strip() 答案
+
+# 判断题
+
+# su.select(".one-e span")[2].string.strip() 答案

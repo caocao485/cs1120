@@ -21,6 +21,7 @@ public abstract class AType {
 				throw new EvalError("Unrecognized type name: " + s.getAtom());
 			}
 		} else {
+			//分析( ProductType -> Type) 即函数类型
 			ArrayList<SExpr> ptype = s.getList(); 
 			if (ptype.size() == 3 && ptype.get(1).isAtom() && ptype.get(1).getAtom().equals("->")) { // valid procedure type
 				ArrayList<AType> params = new ArrayList<AType>();
@@ -31,7 +32,7 @@ public abstract class AType {
 				for (SExpr param : pspec) {
 					params.add(parseType(param));
 				}
-				return new AProcedureType (parseType(ptype.get(2)), params);				
+				return new AProcedureType (parseType(ptype.get(2)), params);
 			} else {
 				throw new EvalError("Unparsable type: " + s.toString());
 			}
@@ -54,9 +55,12 @@ public abstract class AType {
 	public abstract boolean match(AType p_t);
 	
 	// This is just for testing
-	public static void main(String s[]) {
+	public static void main(String[] args) {
 		AType composetype = AType.parseType("((((Number) -> Number) ((Number) -> Number)) -> ((Number) -> Number))");
-		AType mytype = null; // Define a matching type without using parseType
+		AType returnType = new AProcedureType(Number,new ArrayList<AType>(){{add(Number);}});
+		ArrayList<AType> params = new ArrayList<AType>(){{add(returnType); add(returnType);}};
+		AType mytype = new AProcedureType (returnType, params);	// Define a matching type without using parseType
 		assert composetype.match(mytype);
+		System.out.println(composetype.match(mytype));
 	}
 }

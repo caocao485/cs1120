@@ -25,6 +25,7 @@ public class Environment {
 
 	public void addVariable(String name, AType type) {
 		// No value, just a type declaration
+		//这是type place
 		frame.put(name, new Place(type, null));
 	}
 

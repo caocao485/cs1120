@@ -198,6 +198,7 @@ public class Evaluator {
 		AType type = AType.parseType(def.get(3));
 		env.addVariable(name, type);		
 		SVal value = meval(def.get(4), env);
+		assert value != null;
 		assert (type.match(value.getAType()));
 		env.updateVariable(name, value);
 	}
@@ -220,7 +221,9 @@ public class Evaluator {
 
 		String name = def.get(1).getAtom();
 		AType type = AType.parseType(def.get(3));
-		AType valtype = typeCheck(def.get(4), env);
+		Environment newEnv = new Environment(env);
+		newEnv.addVariable(name,type);
+		AType valtype = typeCheck(def.get(4), newEnv);
 
 		if (!type.match(valtype)) {
 			throw new TypeError("Type mismatch.  Definition of " + name + " value " + def.get(4) + " has type "
@@ -252,7 +255,31 @@ public class Evaluator {
 	}
 
 	public static void typeAssignment(SExpr expr, Environment env) throws TypeError {
-		/* Complete this for Problem 1 (Hint: start by copying evalAssignment) */ 
+		/* Complete this for Problem 1 (Hint: start by copying evalAssignment) */
+		ArrayList<SExpr> def = expr.getList();
+		if (def.size() != 3) {
+			throw new TypeError("Bad assignment: " + expr.toString());
+		}
+		if (!def.get(1).isAtom()) {
+			throw new TypeError("Bad assignment: name must be a string: "
+					+ expr.toString());
+		}
+
+		String name = def.get(1).getAtom();
+
+		if (!env.hasVariable(name)) {
+			throw new TypeError("Bad assignment: name must be defined: "
+					+ expr.toString());
+		}
+
+		AType type = env.lookupVariableType(name); //不是lookupVariable
+
+		AType valtype = typeCheck(def.get(2), env);
+
+		if (!type.match(valtype)) {
+			throw new TypeError("Assignment type mismatch: place " + name + " has type " + type + ", but value "
+					+ def.get(2) + " has type " + valtype);
+		}
 	}
 
 	public static SVal evalName(SExpr expr, Environment env) throws EvalError {
@@ -344,7 +371,12 @@ public class Evaluator {
 
 	public static AType typeBegin(SExpr expr, Environment env) throws EvalError {
 		/* Define for Problem 2 */
-		return AType.Error;
+		assert (isBegin(expr));
+		AType returnType = null;
+		for (SExpr s : expr.getList().subList(1, expr.getList().size())) {
+			returnType = typeCheck(s, env);;
+		}
+		return returnType;
 	}
 
 	public static SVal evalCond(SExpr expr, Environment env) {
@@ -369,7 +401,38 @@ public class Evaluator {
 
 	public static AType typeCond(SExpr expr, Environment env) {
 		/* Define for Problem 3 */
-		return AType.Error;
+		assert (isCond(expr));
+		AType returnType = null;
+
+		if(expr.getList().size() == 1){
+			return AType.Void;
+		}
+
+		for (SExpr clause : expr.getList().subList(1, expr.getList().size())) {
+			if (!clause.isList()) {
+				throw new TypeError("Bad cond clause: " + clause);
+			}
+			ArrayList<SExpr> clpair = clause.getList();
+			if (clpair.size() != 2) {
+				throw new TypeError("Bad cond clause: " + clause);
+			}
+
+			if (!typeCheck(clpair.get(0), env).isBoolean()) {
+				throw new TypeError("Cond clause is not a Boolean: " + clpair.get(0));
+			}
+			AType clauseType = typeCheck(clpair.get(1),env);
+
+			if(returnType == null){
+				returnType = clauseType;
+			}else{
+				if(!returnType.match(clauseType)){
+					throw new TypeError("Cond clauses have inconsistent types: first clause has type "
+							+ returnType +
+							" but clause " + clpair.get(1) + " has type "+ clauseType);
+				}
+			}
+		}
+		return returnType;
 	}
 	
 	public static SVal evalLambda(SExpr expr, Environment env) {
