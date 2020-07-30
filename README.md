@@ -1,7 +1,7 @@
 # cs1120
 
 - [cs1120](#cs1120)
-  * [part1总结](#part1--)
+  * [part1 总结](#part1 总结)
   * [part2 总结](#part2---)
   * [Part 3总结](#part-3--)
     + [Python](#python)
@@ -26,7 +26,7 @@
 
 [Anaconda 查看、创建、管理和使用python环境_分花拂柳的博客-CSDN博客_anaconda 创建环境](https://blog.csdn.net/u014628771/article/details/80066624)
 
-## part1总结
+## part1 总结
 
 ------
 
