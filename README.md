@@ -1,16 +1,19 @@
 # cs1120
 
-- [cs1120](#cs1120)
-  * [part1 总结](#part1总结)
-  * [part2 总结](#part2---)
-  * [Part 3总结](#part-3--)
-    + [Python](#python)
-  * [part 4 解释器和可计算](#part-4--------)
-    + [建立一个语言](#------)
-  * [其余语言的BNF形式](#-----bnf--)
-    + [HTTP：](#http-)
-    + [SQL：](#sql-)
-    + [Java](#java)
+---
+
+
+
+* [part1总结](#part1总结)
+* [part2总结](#part2总结)
+* [part3总结](#part3总结)
+  + [Python](#python)
+* [part4解释器和可计算](#part4解释器和可计算)
+  + [建立一个语言](#建立一个语言)
+* [其余语言的BNF形式](#其余语言的BNF形式)
+  + [HTTP：](#HTTP：)
+  + [SQL：](#SQL：)
+  + [Java](#java)
 
 
 
@@ -26,7 +29,7 @@
 
 [Anaconda 查看、创建、管理和使用python环境_分花拂柳的博客-CSDN博客_anaconda 创建环境](https://blog.csdn.net/u014628771/article/details/80066624)
 
-## part1 总结
+## part1总结
 
 ------
 
@@ -411,9 +414,9 @@
 
 ------
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ec135186-9508-42ae-b91f-c89162202c25/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ec135186-9508-42ae-b91f-c89162202c25/Untitled.png)
+![课程](/images/class_content.png)
 
-## part2 总结
+## part2总结
 
 ------
 
@@ -561,7 +564,7 @@
    - L ( v )是页面v上的链接数量（因此，来自包含许多链接的页面的链接的值小于来自一个只包含少量链接的页面的链接的值）。
    - R ( u )的值给出了对确定的页面的排名的衡量。其中数值越高表示越有价值的页面。
 
-## Part 3总结
+## part3总结
 
 ------
 
@@ -971,7 +974,7 @@
               p[i],p[len(p) - 1 - i] = p[len(p) - 1 - i],p[i]
       ```
 
-## part 4 解释器和可计算
+## part4解释器和可计算
 
 ------
 
