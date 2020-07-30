@@ -1,7 +1,7 @@
 # cs1120
 
 - [cs1120](#cs1120)
-  * [part1 总结](#part1 总结)
+  * [part1 总结](#part1总结)
   * [part2 总结](#part2---)
   * [Part 3总结](#part-3--)
     + [Python](#python)
